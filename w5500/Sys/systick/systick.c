@@ -1,0 +1,60 @@
+#include "systick.h"
+
+/**
+*@brief		配置滴答定时器
+*@param		无
+*@return	无
+*/
+void systick_init(void)
+{
+	SysTick_CLKSourceConfig(SysTick_CLKSource_HCLK_Div8);/*使用外部时钟源*/
+	
+	SysTick->LOAD = 0;
+	
+	SysTick->VAL = 0; 
+}
+
+/**
+*@brief		微秒延时函数
+*@param		延时时间
+*@return	无
+*/
+void delay_us(uint16_t us)
+{
+	uint32_t fus = 9 * us;
+
+	SysTick->LOAD = fus;
+	
+	SysTick->VAL = 0;
+	
+	SysTick->CTRL |= (1<<0);
+
+	while((SysTick->CTRL & (1<<16)) == 0);
+	
+	SysTick->CTRL &= ~(1<<0);
+	
+	SysTick->VAL = 0;
+}
+
+/**
+*@brief		毫秒延时函数
+*@param		延时时间
+*@return	无
+*@note		最大延时时间为1864ms
+*/
+void delay_ms(uint16_t ms)
+{
+	uint32_t fms = 9000 * ms;
+
+	SysTick->LOAD = fms;
+	
+	SysTick->VAL = 0;
+	
+	SysTick->CTRL |= (1<<0);
+
+	while((SysTick->CTRL & (1<<16) && (SysTick->CTRL & 0x01)) == 0);
+	
+	SysTick->CTRL &= ~(1<<0);
+	
+	SysTick->VAL = 0;
+}
