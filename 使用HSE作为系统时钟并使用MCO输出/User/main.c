@@ -2,12 +2,26 @@
 
 void hse_config(uint32_t RCC_PLLMul_x);
 void hsi_config(uint32_t RCC_PLLMul_x);
+void mco_config(void);
+
 
 int main(void)
 {
 	// 来到这里的时候，系统的时钟已经被配置成72M。
+	hse_config(RCC_PLLMul_9);
+	RCC_MCOConfig(RCC_MCO_SYSCLK);
 }
 
+
+void mco_config(void)
+{
+	GPIO_InitTypeDef GPIO_InitTypeStruct;
+	
+	GPIO_InitTypeStruct.GPIO_Mode = GPIO_Mode_Out_PP;
+	GPIO_InitTypeStruct.GPIO_Pin = GPIO_Pin_8;
+	GPIO_InitTypeStruct.GPIO_Speed = GPIO_Speed_50MHz;
+	GPIO_Init(GPIOA,&GPIO_InitTypeStruct);
+}
 
 void hse_config(uint32_t RCC_PLLMul_x)
 {
